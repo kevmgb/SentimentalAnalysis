@@ -5,6 +5,7 @@ import csv
 import tweepy
 import re
 from textblob import TextBlob
+import matplotlib.pyplot as plt
 
 
 
@@ -12,11 +13,6 @@ def percentage(part, whole):
     return 100 * float(part) / float(whole)
 
 
-# Goal: Collect Raw tweets from #Ikokazi
-# Inputs: user_key, user_secret, access_token,access_token_secret (for twitter authentication)
-# Output: .csv spreadsheet with tweets
-
-# For application authentication
 
 consumer_key = input('Enter Your Consumer Key: ')
 consumer_secret = input('Enter Your Consumer Secret: ')
@@ -39,6 +35,33 @@ neutral = 0
 polarity = 0
 
 for tweet in tweets:
-    print(tweet.text)
+    # print(tweet.text)
     analysis = TextBlob(tweet.text)
-    print(analysis.sentiment)
+    # print(analysis.sentiment)
+    polarity += analysis.sentiment.polarity
+
+    if analysis.sentiment.polarity == 0:
+        neutral += 1
+    elif analysis.sentiment.polarity < 0.00:
+        negative += 1
+    elif analysis.sentiment.polarity > 0.00:
+        positive += 1
+
+positive = percentage(positive, no_of_search_terms)
+negative = percentage(negative, no_of_search_terms)
+neutral = percentage(neutral, no_of_search_terms)
+
+positive = format(positive, '.2f')
+neutral = format(neutral, '.2f')
+negative = format(negative, '.2f')
+
+labels = ['Positive['+str(positive)+'%]', 'Neutral[' + str(neutral) + '%]', 'Negative[' + str(negative)+ '%]']
+sizes = [positive,neutral,negative]
+colors = ['yellowgreen', 'gold', 'red']
+
+patches, texts = plt.pie(sizes, colors=colors, startangle=90)
+plt.legend(patches, labels, loc="best")
+plt.title("Public perception of "+search_term+" by analyzing "+ str(no_of_search_terms)+ "tweets.")
+plt.axis('equal')
+plt.tight_layout()
+plt.show()
