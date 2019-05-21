@@ -25,11 +25,15 @@ no_of_search_terms = int(input("Enter the number of search terms: "))
 
 tweets = tweepy.Cursor(api.search, q=search_term).items(no_of_search_terms)
 
-
+# Initialize
 positive = 0
 negative = 0
 neutral = 0
 polarity = 0
+
+# .Sentiment returns a polarity between -1.0(Completely Negative) and 1.0(Completely positve)
+# If 0 its negative, >0 its positive, <0 its negative
+# A value of 1 is then added to the corresponding sentiment
 
 for tweet in tweets:
     # print(tweet.text)
@@ -44,14 +48,17 @@ for tweet in tweets:
     elif analysis.sentiment.polarity > 0.00:
         positive += 1
 
+# Calculate percentage using def percentage
 positive = percentage(positive, no_of_search_terms)
 negative = percentage(negative, no_of_search_terms)
 neutral = percentage(neutral, no_of_search_terms)
 
+# Format to 2dp
 positive = format(positive, '.2f')
 neutral = format(neutral, '.2f')
 negative = format(negative, '.2f')
 
+# Plotting
 labels = ['Positive[' + str(positive) + '%]', 'Neutral[' + str(neutral) + '%]', 'Negative[' + str(negative) + '%]']
 sizes = [positive, neutral, negative]
 colors = ['yellowgreen', 'gold', 'red']
